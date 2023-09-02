@@ -7,39 +7,12 @@ on:
 jobs:
   ci:
     uses: ./.github/workflows/ci.yaml
-  branch-name:
-    name: Get current branch name
-    runs-on: ubuntu-latest
-    outputs:
-      branch-name: ${{ steps.branch-name.outputs.current_branch }}
-    steps:
-      - name: Get the current branch name
-        id: branch-name
-        uses: tj-actions/branch-names@v7
-      - name: Print
-        run: echo ${{ steps.branch-name.outputs.current_branch }}
-  commit-sha:
-    name: Get SHA value of latest commit
-    runs-on: ubuntu-latest
-    outputs:
-      sha: ${{ steps.sha.outputs.SHORT_SHA }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Output short git SHA
-        id: sha
-        if: always() && github.event_name == 'pull_request'
-        run: |
-          SHORT_SHA=$(git log --format='%h' -n 1)
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
   cd:
     name: Deploy with Cloudflare Pages
     runs-on: ubuntu-latest
     needs:
       - ci
-      - branch-name
-      - commit-sha
     permissions:
-      pull-requests: write
       deployments: write
     steps:
       - name: Download artifacts
@@ -58,38 +31,3 @@ jobs:
           branch: ${{ needs.branch-name.outputs.branch-name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: 3
-      - name: Output deployment status
-        id: content
-        if: always() && github.event_name == 'pull_request'
-        run: |
-          outputStatus() { echo "CONTENT=$1" >> $GITHUB_OUTPUT; }
-
-          if [ $STATUS = 'success' ]; then
-            outputStatus "✅  Deployment succeeded."
-          else
-            outputStatus "🚫  Deployment failed."
-          fi
-        env:
-          STATUS: ${{ steps.cf.outcome }}
-      - name: Notify deployment status and its URL
-        uses: actions-cool/maintain-one-comment@v3
-        if: always() && github.event_name == 'pull_request'
-        with:
-          body: |
-            ## Deploying with  <a href="https://pages.dev"><img alt="Cloudflare Pages" src="https://user-images.githubusercontent.com/23264/106598434-9e719e00-654f-11eb-9e59-6167043cfa01.png" width="16"></a>  Cloudflare Pages
-
-            <table>
-              <tr>
-                <td><strong>Latest commit:</strong> </td>
-                <td><code>${{ needs.commit-sha.outputs.sha }}</code></td>
-              </tr>
-              <tr>
-                <td><strong>Status:</strong></td>
-                <td>${{ steps.content.outputs.CONTENT }}</td>
-              </tr>
-              <tr>
-                <td><strong>Deployment URL:</strong></td>
-                <td><a href="${{ steps.cf.outputs.url }}">${{ steps.cf.outputs.url }}</a></td>
-              </tr>
-            </table>
-          body-include: '<!-- Created by actions-cool/maintain-one-comment -->'
