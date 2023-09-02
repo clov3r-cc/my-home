@@ -28,3 +28,4 @@ jobs:
           projectName: my-home
           directory: assets
           branch: main
+          wranglerVersion: 3
