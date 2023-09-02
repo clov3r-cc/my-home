@@ -7,7 +7,7 @@ on:
   workflow_call:
 jobs:
   ci:
-    name: Build and Test
+    name: Format and Prepare for deploy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,3 +29,8 @@ jobs:
           rm -rf src/css/main.css
       - name: Format
         run: pnpm fmt
+      - name: Upload files
+        uses: actions/upload-artifact@v3
+        with:
+          name: assets
+          path: src
