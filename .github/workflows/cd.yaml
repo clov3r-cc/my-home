@@ -21,4 +21,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: assets
-      - run: ls
+          path: assets
+      - run: |
+          ls -l
+          echo ---
+          ls -l assets
+          echo ---
+          ls -l src
