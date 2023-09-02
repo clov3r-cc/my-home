@@ -22,9 +22,7 @@ jobs:
         with:
           name: assets
           path: assets
-      - run: |
-          ls -l
-          echo ---
-          ls -l assets
-          echo ---
-          ls -l src
+      - name: Deploy
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
