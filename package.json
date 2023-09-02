@@ -1,0 +1,17 @@
+{
+  "name": "my-home",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "css": "tailwindcss -i ./src/css/main.css -o ./src/css/style.css",
+    "css:w": "tailwindcss -i ./src/css/main.css -o ./src/css/style.css --watch",
+    "fmt": "prettier -c ./src/*.html",
+    "fmt:w": "prettier -w ./src/*.html"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}
