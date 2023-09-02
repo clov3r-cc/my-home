@@ -2,7 +2,7 @@
 
 [@Lucky3028](https://github.com/Lucky3028) についてのホームページです。
 
-## デプロイ先
+## サイト
 
 デプロイ先は[cap-l.cc](https://cap-l.cc)です。Cloudflare Pagesによってホストされています。
 
