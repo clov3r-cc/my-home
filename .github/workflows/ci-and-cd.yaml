@@ -55,6 +55,7 @@ jobs:
           projectName: my-home
           directory: assets
           branch: ${{ needs.branch-name.outputs.branch-name }}
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: 3
       - name: Output deployment status
         id: content
