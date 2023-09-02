@@ -15,15 +15,16 @@ jobs:
     needs:
       - ci
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
           name: assets
           path: assets
-      - name: Deploy
-        uses: cloudflare/wrangler-action@v3
+      - name: Publish to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
-          command: pages deploy assets
+          accountId: fff06038a70892193e0fa1e9e270436a
+          projectName: my-home
+          directory: assets
+          branch: main
