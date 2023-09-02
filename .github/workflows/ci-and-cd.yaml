@@ -65,7 +65,6 @@ jobs:
       - branch-name
       - commit-sha
     permissions:
-      contents: write
       pull-requests: write
     steps:
       - name: Download artifacts
