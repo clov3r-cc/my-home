@@ -1,10 +1,12 @@
-name: CI nd CD
+name: CI and CD
 on:
   push:
     branches:
       - main
   pull_request:
 jobs:
+  ci:
+    uses: ./.github/workflows/ci.yaml
   branch-name:
     name: Get current branch name
     runs-on: ubuntu-latest
@@ -29,34 +31,6 @@ jobs:
         run: |
           SHORT_SHA=$(git log --format='%h' -n 1)
           echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
-  ci:
-    name: Format and Prepare for deploy
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2
-      - name: Get node version from Volta
-        id: get-node-version
-        uses: keita-hino/get-node-version-from-volta@main
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ steps.get-node-version.outputs.nodeVersion }}
-          cache: pnpm
-      - name: Install dependencies
-        run: pnpm i
-        shell: bash
-      - name: Generate CSS
-        run: |
-          pnpm css
-          rm -rf src/css/main.css
-      - name: Format
-        run: pnpm fmt
-      - name: Upload files
-        uses: actions/upload-artifact@v3
-        with:
-          name: assets
-          path: src
   cd:
     name: Deploy with Cloudflare Pages
     runs-on: ubuntu-latest
