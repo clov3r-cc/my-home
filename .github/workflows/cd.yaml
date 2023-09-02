@@ -15,8 +15,6 @@ jobs:
     needs:
       - ci
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
