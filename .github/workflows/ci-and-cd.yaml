@@ -16,6 +16,19 @@ jobs:
         uses: tj-actions/branch-names@v7
       - name: Print
         run: echo ${{ steps.branch-name.outputs.current_branch }}
+  commit-sha:
+    name: Get SHA value of latest commit
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.sha.outputs.SHORT_SHA }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Output short git SHA
+        id: sha
+        if: always() && github.event_name == 'pull_request'
+        run: |
+          SHORT_SHA=$(git log --format='%h' -n 1)
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
   ci:
     name: Format and Prepare for deploy
     runs-on: ubuntu-latest
@@ -50,6 +63,7 @@ jobs:
     needs:
       - ci
       - branch-name
+      - commit-sha
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -66,12 +80,6 @@ jobs:
           directory: assets
           branch: ${{ needs.branch-name.outputs.branch-name }}
           wranglerVersion: 3
-      - name: Output short git SHA
-        id: sha
-        if: always() && github.event_name == 'pull_request'
-        run: |
-          SHORT_SHA=$(git log --format='%h' -n 1)
-          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
       - name: Output deployment status
         id: content
         if: always() && github.event_name == 'pull_request'
@@ -95,7 +103,7 @@ jobs:
             <table>
               <tr>
                 <td><strong>Latest commit:</strong> </td>
-                <td><code>${{ steps.sha.outputs.SHORT_SHA }}</code></td>
+                <td><code>${{ needs.commit-sha.outputs.sha }}</code></td>
               </tr>
               <tr>
                 <td><strong>Status:</strong></td>
