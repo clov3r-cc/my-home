@@ -4,6 +4,4 @@ module.exports = {
   singleQuote: true,
   useTabs: false,
   trailingComma: 'all',
-  parser: 'html',
-  htmlWhitespaceSensitivity: 'ignore',
 };
