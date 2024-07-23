@@ -4,7 +4,7 @@
 
 ## サイト
 
-デプロイ先は[cap-l.cc](https://cap-l.cc)です。Cloudflare Pagesによってホストされています。
+デプロイ先は[clov3r.cc](https://clov3r.cc)です。Cloudflare Pagesによってホストされています。
 
 ## デプロイ
 
