@@ -26,7 +26,7 @@ jobs:
       - name: Format
         run: pnpm fmt
       - name: Upload files
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: assets
           path: src
