@@ -6,27 +6,37 @@ on:
   pull_request:
   workflow_dispatch:
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yaml
-  cd:
+  ci-and-cd:
     name: Deploy with Cloudflare Pages
     runs-on: ubuntu-latest
-    needs:
-      - ci
     permissions:
       deployments: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-      - name: Download artifacts
-        uses: actions/download-artifact@v7
+      - name: Install dev deps
+        uses: jdx/mise-action@v3
+      - name: Get pnpm cache directory path
+        id: pnpm-cache-dir-path
+        run: echo "dir=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v5
         with:
-          name: assets
-          path: assets
+          path: ${{ steps.pnpm-cache-dir-path.outputs.dir }}
+          key: pnpm-cache-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-cache-${{ runner.os }}-
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Generate CSS
+        run: |
+          pnpm css
+          rm -rf src/css/main.css
+      - name: Format
+        run: pnpm fmt
       - name: Deploy with Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: fff06038a70892193e0fa1e9e270436a
-          command: pages deploy assets --project-name=my-home
+          command: pages deploy src --project-name=my-home --commit-dirty --branch ${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
