@@ -16,19 +16,17 @@ jobs:
     permissions:
       deployments: write
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
       - name: Download artifacts
         uses: actions/download-artifact@v7
         with:
           name: assets
           path: assets
       - name: Deploy with Cloudflare Pages
-        id: cf
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: fff06038a70892193e0fa1e9e270436a
-          projectName: my-home
-          directory: assets
-          branch: ${{ github.head_ref || github.ref_name }}
+          command: pages deploy assets --project-name=my-home
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
-          wranglerVersion: 3
