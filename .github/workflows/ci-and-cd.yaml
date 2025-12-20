@@ -29,6 +29,6 @@ jobs:
           accountId: fff06038a70892193e0fa1e9e270436a
           projectName: my-home
           directory: assets
-          branch: ${{ needs.branch-name.outputs.branch-name }}
+          branch: ${{ github.head_ref || github.ref_name }}
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           wranglerVersion: 3
