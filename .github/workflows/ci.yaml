@@ -6,19 +6,21 @@ jobs:
     name: Format and Prepare for deploy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-      - name: Get node version from Volta
-        id: get-node-version
-        uses: keita-hino/get-node-version-from-volta@main
-      - uses: actions/setup-node@v6
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Install dev deps
+        uses: jdx/mise-action@v3
+      - name: Get pnpm cache directory path
+        id: pnpm-cache-dir-path
+        run: echo "dir=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v4
         with:
-          node-version: ${{ steps.get-node-version.outputs.nodeVersion }}
-          cache: pnpm
+          path: ${{ steps.pnpm-cache-dir-path.outputs.dir }}
+          key: pnpm-cache-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-cache-${{ runner.os }}-
       - name: Install dependencies
-        run: pnpm i
-        shell: bash
+        run: pnpm install --frozen-lockfile
       - name: Generate CSS
         run: |
           pnpm css
