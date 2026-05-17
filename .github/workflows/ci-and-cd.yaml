@@ -34,7 +34,7 @@ jobs:
       - name: Format
         run: pnpm fmt
       - name: Deploy with Cloudflare Pages
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           accountId: fff06038a70892193e0fa1e9e270436a
